@@ -10,7 +10,7 @@ type Coordinates = {
 export type Offer = {
   title: string;
   description: string;
-  publicationDate: string;
+  publicationDate: Date;
   city: CityType;
   previewImage: string;
   housingPhotos: string[];
