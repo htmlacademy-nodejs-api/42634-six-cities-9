@@ -1,8 +1,10 @@
 import {FileReader} from './file-reader.interface.js';
-import {Offer} from '../../types/offer.type.js';
+import {CityWithCoordinates, Coordinates, Offer} from '../../types/offer.type.js';
 import {CityType} from '../../types/city-type.enum.js';
 import {HousingType} from '../../types/housing-type.enum.js';
 import {readFileSync} from 'node:fs';
+import {ConvenienceType} from '../../types/convenience-type.enum.js';
+import {User, UserVariant} from '../../types/user.type.js';
 
 export class TsvFileReader implements FileReader {
   private rowData = '';
@@ -17,6 +19,34 @@ export class TsvFileReader implements FileReader {
 
   private parseStringToNumber(str: string) {
     return Number.parseInt(str, 10);
+  }
+
+  private parseStringToBoolean(str: string) {
+    return str.toLowerCase() === 'true';
+  }
+
+  private parseCityWithCoords(str: string): CityWithCoordinates {
+    const [city, lat, lon] = str.split(',');
+
+    return { city: city as CityType, coordinates: { latitude: Number(lat), longitude: Number(lon) } };
+  }
+
+  private parseStringToArray(str: string) {
+    return str
+      .split(',')
+      .map((item) => item.trim());
+  }
+
+  private parseCoords(str: string): Coordinates {
+    const [lat, lon] = str.split(',');
+
+    return { latitude: Number(lat), longitude: Number(lon) };
+  }
+
+  private parseStringToUser(str: string): User {
+    const [name, email, avatar, password, userType] = str.split(',');
+
+    return { name, email, avatar, password, userType: userType as UserVariant };
   }
 
   private parseLineToOffer(line: string): Offer {
@@ -35,7 +65,7 @@ export class TsvFileReader implements FileReader {
       guestsCount,
       rentalPrice,
       conveniences,
-      authorId,
+      user,
       commentsCount,
       coordinates,
     ] = line.split('\t');
@@ -44,20 +74,20 @@ export class TsvFileReader implements FileReader {
       title,
       description,
       publicationDate: new Date(publicationDate),
-      city: CityType.Amsterdam,
+      city: this.parseCityWithCoords(city),
       previewImage,
-      housingPhotos: [],
-      isPremium: false,
-      isFavorites: false,
-      rating: 0,
-      housingType: HousingType.Apartment,
+      housingPhotos: this.parseStringToArray(housingPhotos),
+      isPremium: this.parseStringToBoolean(isPremium),
+      isFavorites: this.parseStringToBoolean(isFavorites),
+      rating: Number(rating),
+      housingType: housingType as HousingType,
       roomsCount: this.parseStringToNumber(roomsCount),
       guestsCount: this.parseStringToNumber(guestsCount),
       rentalPrice: this.parseStringToNumber(rentalPrice),
-      conveniences: [],
-      authorId,
+      conveniences: this.parseStringToArray(conveniences) as ConvenienceType[],
+      user: this.parseStringToUser(user),
       commentsCount: this.parseStringToNumber(commentsCount),
-      coordinates: { latitude: 0, longitude: 0 }
+      coordinates: this.parseCoords(coordinates)
     };
   }
 

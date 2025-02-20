@@ -1,17 +1,20 @@
 import {CityType} from './city-type.enum.js';
 import {HousingType} from './housing-type.enum.js';
 import {ConvenienceType} from './convenience-type.enum.js';
+import {User} from './user.type.js';
 
-type Coordinates = {
+export type Coordinates = {
   latitude: number;
   longitude: number;
 }
+
+export type CityWithCoordinates = { city: CityType, coordinates: Coordinates };
 
 export type Offer = {
   title: string;
   description: string;
   publicationDate: Date;
-  city: CityType;
+  city: CityWithCoordinates;
   previewImage: string;
   housingPhotos: string[];
   isPremium: boolean;
@@ -22,7 +25,7 @@ export type Offer = {
   guestsCount: number;
   rentalPrice: number;
   conveniences: ConvenienceType[];
-  authorId: string;
+  user: User;
   commentsCount?: number;
   coordinates: Coordinates;
 }
