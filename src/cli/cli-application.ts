@@ -20,7 +20,7 @@ export class CliApplication {
     return this.commands[commandName] ?? this.getDefaultCommand();
   }
 
-  public registerCommand(commandList: Command[]) {
+  public registerCommands(commandList: Command[]) {
     commandList.forEach((command) => {
       if (Object.hasOwn(this.commands, command.getName())) {
         throw new Error(`Command ${command.getName()} is already registered`);
