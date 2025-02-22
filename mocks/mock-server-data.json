@@ -31,6 +31,59 @@
       "Двухкомнатная квартирка без ремонта под ваш вкус",
       "Трехкомнатные апартаменты высокого класса"
     ],
+    "cities": [
+      {
+        "city": "Paris",
+        "coordinates": {
+          "latitude": 28.8566,
+          "longitude": 2.3522
+        }
+      },
+      {
+        "city": "Cologne",
+        "coordinates": {
+          "latitude": 95.8566,
+          "longitude": 1.3522
+        }
+      },
+      {
+        "city": "Brussels",
+        "coordinates": {
+          "latitude": 483.8566,
+          "longitude": 12.3522
+        }
+      },
+      {
+        "city": "Amsterdam",
+        "coordinates": {
+          "latitude": 6.8566,
+          "longitude": 24.3522
+        }
+      },
+      {
+        "city": "Hamburg",
+        "coordinates": {
+          "latitude": 18.8566,
+          "longitude": 53.3522
+        }
+      },
+      {
+        "city": "Dusseldorf",
+        "coordinates": {
+          "latitude": 48.8566,
+          "longitude": 2.3522
+        }
+      }
+    ],
+    "previewImages": [
+      "https://example.com/preview-image1.jpg",
+      "https://example.com/preview-image2.jpg",
+      "https://example.com/preview-image3.jpg",
+      "https://example.com/preview-image4.jpg",
+      "https://example.com/preview-image5.jpg",
+      "https://example.com/preview-image6.jpg",
+      "https://example.com/preview-image7.jpg"
+    ],
     "housingPhotos": [
       "https://example.com/photo1.jpg",
       "https://example.com/photo2.jpg",
@@ -40,14 +93,51 @@
       "https://example.com/photo6.jpg",
       "https://example.com/photo7.jpg"
     ],
-    "conveniences": [
-      "Breakfast",
-      "Air conditioning",
-      "Laptop friendly workspace",
-      "Baby seat",
-      "Washer",
-      "Towels",
-      "Fridge"
+    "users": [
+      {
+        "name": "John Doe",
+        "email": "johndoe@example.com",
+        "avatar": "https://example.com/johnAvatar.jpg",
+        "password": "password123",
+        "userType": "standard"
+      },
+      {
+        "name": "Kotik Jerry",
+        "email": "jerry@example.com",
+        "avatar": "https://example.com/jerrynAvatar.jpg",
+        "password": "9574474",
+        "userType": "standard"
+      },
+      {
+        "name": "Kotik Keks",
+        "email": "keks@example.com",
+        "avatar": "https://example.com/keksnAvatar.jpg",
+        "password": "utnitgtt",
+        "userType": "pro"
+      },
+      {
+        "name": "Adebayo Akinfenwa",
+        "email": "ade@example.com",
+        "avatar": "https://example.com/beastAvatar.jpg",
+        "password": "qwerty123",
+        "userType": "pro"
+      }
+    ],
+    "coordinates": [
+      {
+        "latitude": 55.7558,
+        "longitude": 37.6173
+      },
+
+      {
+        "latitude": 43.5853,
+        "longitude": 39.7233
+      },
+
+      {
+        "latitude": 59.9375,
+        "longitude": 30.3086
+      }
     ]
   }
 }
