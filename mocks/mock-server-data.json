@@ -93,6 +93,16 @@
       "https://example.com/photo6.jpg",
       "https://example.com/photo7.jpg"
     ],
+    "housingTypes": ["apartment", "house", "room", "hotel"],
+    "conveniences": [
+      "Breakfast",
+      "Air conditioning",
+      "Laptop friendly workspace",
+      "Baby seat",
+      "Washer",
+      "Towels",
+      "Fridge"
+    ],
     "users": [
       {
         "name": "John Doe",
