@@ -2,19 +2,16 @@ import {FileReader} from './file-reader.interface.js';
 import {CityWithCoordinates, Coordinates, Offer} from '../../types/offer.type.js';
 import {CityType} from '../../types/city-type.enum.js';
 import {HousingType} from '../../types/housing-type.enum.js';
-import {readFileSync} from 'node:fs';
 import {ConvenienceType} from '../../types/convenience-type.enum.js';
 import {User, UserVariant} from '../../types/user.type.js';
+import {EventEmitter} from 'node:events';
+import {createReadStream} from 'node:fs';
 
-export class TsvFileReader implements FileReader {
-  private rowData = '';
+const CHUNK_SIZE = 16384; // 16KB
 
-  constructor(private readonly fileName: string) {}
-
-  private validateRowData() {
-    if (!this.rowData) {
-      throw new Error('File was not read');
-    }
+export class TsvFileReader extends EventEmitter implements FileReader {
+  constructor(private readonly fileName: string) {
+    super();
   }
 
   private parseStringToNumber(str: string) {
@@ -91,19 +88,42 @@ export class TsvFileReader implements FileReader {
     };
   }
 
-  private parseRowDataToOffers(): Offer[] {
-    return this.rowData
-      .split('\n')
-      .filter((row) => row.trim().length > 0)
-      .map((line) => this.parseLineToOffer(line));
-  }
+  public async read() {
+    // Создаем поток чтения файла с заданным размером чанка и кодировкой
+    const readStream = createReadStream(this.fileName, {
+      highWaterMark: CHUNK_SIZE,
+      encoding: 'utf8',
+    });
 
-  public read() {
-    this.rowData = readFileSync(this.fileName, { encoding: 'utf8' });
-  }
+    let buffer = ''; // Буфер для хранения данных, которые еще не обработаны
+    let importedRowCount = 0; // Счетчик импортированных строк
 
-  public toArray(): Offer[] {
-    this.validateRowData();
-    return this.parseRowDataToOffers();
+    // Асинхронно читаем файл чанками
+    for await (const chunk of readStream) {
+      buffer += chunk; // Добавляем текущий чанк в буфер
+
+      // Обрабатываем строки, пока в буфере есть символ новой строки (\n)
+      let newlineIndex;
+      while ((newlineIndex = buffer.indexOf('\n')) >= 0) {
+        const line = buffer.slice(0, newlineIndex).trim(); // Извлекаем строку до \n и удаляем пробелы
+        buffer = buffer.slice(newlineIndex + 1); // Оставляем остаток после \n
+
+        if (line) { // Если строка не пустая, парсим и обрабатываем
+          const parsedOffer = this.parseLineToOffer(line);
+          this.emit('line', parsedOffer); // Генерируем событие 'line' с разобранным объектом
+          importedRowCount++;
+        }
+      }
+    }
+
+    // Если после чтения остались данные в буфере (без завершающего \n), обрабатываем их
+    if (buffer.trim()) {
+      const parsedOffer = this.parseLineToOffer(buffer.trim());
+      this.emit('line', parsedOffer);
+      importedRowCount++;
+    }
+
+    // Генерируем событие 'end' после завершения обработки файла
+    this.emit('end', importedRowCount);
   }
 }

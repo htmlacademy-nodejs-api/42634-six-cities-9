@@ -1,0 +1,153 @@
+{
+  "api": {
+    "titles": [
+      "Уютная гавань",
+      "Солнечный уголок",
+      "Дом у реки",
+      "Зимняя сказка",
+      "Летний ветерок",
+      "Квартира мечты",
+      "Городской оазис",
+      "Тихий приют",
+      "Вилла на холме",
+      "Морской бриз",
+      "Садовый домик",
+      "Панорамный вид на город",
+      "Комфортное гнездо в центре города"
+    ],
+    "descriptions": [
+      "Уютная квартира с современной отделкой и большим балконом. Идеально подходит для молодой семьи.",
+      "Просторная студия в центре города с доступом к фитнес-центру и бассейну.",
+      "Комфортный дом на окраине города с садом и местом для парковки автомобиля.",
+      "Светлая однокомнатная квартира рядом с парком, идеальная для одиночек или пары.",
+      "Двухуровневая квартира в новом доме с панорамным видом на городскую панораму.",
+      "Квартира-студия в историческом здании, сохраняющая дух старого города.",
+      "Трехкомнатная квартира в тихом районе, подходящая для большой семьи или компании друзей.",
+      "Маленький уютный домик на даче с возможностью отдыха на природе круглый год.",
+      "Пентхаус класса люкс со спа-зоной и частной террасой. Возможность аренды на длительный срок только для серьезных клиентов.",
+      "Однокомнатная квартира рядом со станцией метро, идеальна для тех, кто ценит удобство расположения",
+      "Четырехкомнатный особняк в элитном районе с бассейном и теннисным кортом. Доступно только по предварительной договоренности",
+      "Квартира-лофт в модном районе со свободной планировкой. Подходит творческим людям",
+      "Двухкомнатная квартирка без ремонта под ваш вкус",
+      "Трехкомнатные апартаменты высокого класса"
+    ],
+    "cities": [
+      {
+        "city": "Paris",
+        "coordinates": {
+          "latitude": 28.8566,
+          "longitude": 2.3522
+        }
+      },
+      {
+        "city": "Cologne",
+        "coordinates": {
+          "latitude": 95.8566,
+          "longitude": 1.3522
+        }
+      },
+      {
+        "city": "Brussels",
+        "coordinates": {
+          "latitude": 483.8566,
+          "longitude": 12.3522
+        }
+      },
+      {
+        "city": "Amsterdam",
+        "coordinates": {
+          "latitude": 6.8566,
+          "longitude": 24.3522
+        }
+      },
+      {
+        "city": "Hamburg",
+        "coordinates": {
+          "latitude": 18.8566,
+          "longitude": 53.3522
+        }
+      },
+      {
+        "city": "Dusseldorf",
+        "coordinates": {
+          "latitude": 48.8566,
+          "longitude": 2.3522
+        }
+      }
+    ],
+    "previewImages": [
+      "https://example.com/preview-image1.jpg",
+      "https://example.com/preview-image2.jpg",
+      "https://example.com/preview-image3.jpg",
+      "https://example.com/preview-image4.jpg",
+      "https://example.com/preview-image5.jpg",
+      "https://example.com/preview-image6.jpg",
+      "https://example.com/preview-image7.jpg"
+    ],
+    "housingPhotos": [
+      "https://example.com/photo1.jpg",
+      "https://example.com/photo2.jpg",
+      "https://example.com/photo3.jpg",
+      "https://example.com/photo4.jpg",
+      "https://example.com/photo5.jpg",
+      "https://example.com/photo6.jpg",
+      "https://example.com/photo7.jpg"
+    ],
+    "housingTypes": ["apartment", "house", "room", "hotel"],
+    "conveniences": [
+      "Breakfast",
+      "Air conditioning",
+      "Laptop friendly workspace",
+      "Baby seat",
+      "Washer",
+      "Towels",
+      "Fridge"
+    ],
+    "users": [
+      {
+        "name": "John Doe",
+        "email": "johndoe@example.com",
+        "avatar": "https://example.com/johnAvatar.jpg",
+        "password": "password123",
+        "userType": "standard"
+      },
+      {
+        "name": "Kotik Jerry",
+        "email": "jerry@example.com",
+        "avatar": "https://example.com/jerrynAvatar.jpg",
+        "password": "9574474",
+        "userType": "standard"
+      },
+      {
+        "name": "Kotik Keks",
+        "email": "keks@example.com",
+        "avatar": "https://example.com/keksnAvatar.jpg",
+        "password": "utnitgtt",
+        "userType": "pro"
+      },
+      {
+        "name": "Adebayo Akinfenwa",
+        "email": "ade@example.com",
+        "avatar": "https://example.com/beastAvatar.jpg",
+        "password": "qwerty123",
+        "userType": "pro"
+      }
+    ],
+    "coordinates": [
+      {
+        "latitude": 55.7558,
+        "longitude": 37.6173
+      },
+
+      {
+        "latitude": 43.5853,
+        "longitude": 39.7233
+      },
+
+      {
+        "latitude": 59.9375,
+        "longitude": 30.3086
+      }
+    ]
+  }
+}
