@@ -7,9 +7,9 @@ import {User, UserVariant} from '../../types/user.type.js';
 import {EventEmitter} from 'node:events';
 import {createReadStream} from 'node:fs';
 
-export class TsvFileReader extends EventEmitter implements FileReader {
-  private CHUNK_SIZE = 16384; // 16KB
+const CHUNK_SIZE = 16384; // 16KB
 
+export class TsvFileReader extends EventEmitter implements FileReader {
   constructor(private readonly fileName: string) {
     super();
   }
@@ -91,7 +91,7 @@ export class TsvFileReader extends EventEmitter implements FileReader {
   public async read() {
     // Создаем поток чтения файла с заданным размером чанка и кодировкой
     const readStream = createReadStream(this.fileName, {
-      highWaterMark: this.CHUNK_SIZE, //  16KB
+      highWaterMark: CHUNK_SIZE,
       encoding: 'utf8',
     });
 
