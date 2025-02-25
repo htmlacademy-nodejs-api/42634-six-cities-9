@@ -17,12 +17,22 @@ export class PinoLogger implements Logger {
     mkdir(logDir, { recursive: true })
       .catch((err) => this.logger.error('Ошибка создания каталога для логов:', err));
 
-    const fileTransport = transport({
-      target: 'pino/file',
-      options: { destination }
+    const multiTransport = transport({
+      targets: [
+        {
+          target: 'pino/file',
+          options: { destination },
+          level: 'debug'
+        },
+        {
+          target: 'pino/file',
+          options: {},
+          level: 'info'
+        }
+      ]
     });
 
-    this.logger = pino({}, fileTransport);
+    this.logger = pino({}, multiTransport);
   }
 
   info(message: string, ...params: unknown[]) {
