@@ -1,11 +1,28 @@
 import {Logger} from './logger.interface.js';
-import { Logger as PinoInstance, pino } from 'pino';
+import {Logger as PinoInstance, pino, transport} from 'pino';
+import {getCurrentModuleDirectoryPath} from '../../helpers/getCurrentModuleDirectoryPath.js';
+import {resolve, dirname} from 'node:path';
+import {mkdir} from 'node:fs/promises';
 
 export class PinoLogger implements Logger {
   private readonly logger: PinoInstance;
 
   constructor() {
-    this.logger = pino();
+    const modulePath = getCurrentModuleDirectoryPath();
+    const logFilePath = 'logs/rest.log';
+    const destination = resolve(modulePath, '../../../', logFilePath);
+    const logDir = dirname(destination);
+
+    // Создаем каталог для логов, если он не существует
+    mkdir(logDir, { recursive: true })
+      .catch((err) => this.logger.error('Ошибка создания каталога для логов:', err));
+
+    const fileTransport = transport({
+      target: 'pino/file',
+      options: { destination }
+    });
+
+    this.logger = pino({}, fileTransport);
   }
 
   info(message: string, ...params: unknown[]) {
