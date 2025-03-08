@@ -8,6 +8,7 @@ export type RestSchema = {
   DB_USERNAME: string;
   DB_PASSWORD: string;
   DB_PORT: string;
+  DB_NAME: string;
   ME_CONFIG_MONGODB_ADMINUSERNAME: string;
   ME_CONFIG_MONGODB_PASSWORD: string;
 }
@@ -51,16 +52,22 @@ export const configRestSchema = convict<RestSchema>({
     env: 'DB_PORT',
     default: '27017',
   },
+  DB_NAME: {
+    doc: 'Name of the database server',
+    format: String,
+    env: 'DB_NAME',
+    default: 'six-cities_data',
+  },
   ME_CONFIG_MONGODB_ADMINUSERNAME: {
     doc: 'Username of the MONGODB database server',
     format: String,
     env: 'ME_CONFIG_MONGODB_ADMINUSERNAME',
-    default: null,
+    default: 'admin',
   },
   ME_CONFIG_MONGODB_PASSWORD: {
     doc: 'Password of the MONGODB database server',
     format: String,
     env: 'ME_CONFIG_MONGODB_PASSWORD',
-    default: null,
+    default: 'test',
   }
 });
