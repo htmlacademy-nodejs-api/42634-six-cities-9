@@ -12,7 +12,8 @@ const userSchema = new Schema({
   name: {
     type: String,
     unique: true,
-    minlength: [4, 'Min length for name path is 4']
+    minlength: [4, 'Min length for name path is 4'],
+    required: true
   },
   email: {
     type: String,
