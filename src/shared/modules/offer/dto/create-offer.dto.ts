@@ -1,13 +1,12 @@
-import {CityType} from '../../../types/city-type.enum.js';
 import {HousingType} from '../../../types/housing-type.enum.js';
 import {ConvenienceType} from '../../../types/convenience-type.enum.js';
-import {Coordinates} from '../../../types/offer.type.js';
+import {CityWithCoordinates, Coordinates} from '../../../types/offer.type.js';
 
 export class CreateOfferDto {
   public title: string;
   public description: string;
   public publicationDate: Date;
-  public city: CityType;
+  public city: CityWithCoordinates;
   public previewImage: string;
   public housingPhotos: string[];
   public isPremium: boolean;

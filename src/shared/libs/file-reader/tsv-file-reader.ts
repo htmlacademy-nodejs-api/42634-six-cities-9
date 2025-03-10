@@ -110,7 +110,11 @@ export class TsvFileReader extends EventEmitter implements FileReader {
 
         if (line) { // Если строка не пустая, парсим и обрабатываем
           const parsedOffer = this.parseLineToOffer(line);
-          this.emit('line', parsedOffer); // Генерируем событие 'line' с разобранным объектом
+
+          await new Promise((resolve) => {
+            this.emit('line', parsedOffer, resolve);
+          });
+
           importedRowCount++;
         }
       }
