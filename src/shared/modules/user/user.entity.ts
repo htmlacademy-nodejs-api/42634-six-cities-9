@@ -1,5 +1,5 @@
 import {User, UserVariant} from '../../types/user.type.js';
-import {defaultClasses, getModelForClass, modelOptions, prop} from '@typegoose/typegoose';
+import {defaultClasses, getModelForClass, modelOptions, prop, Severity} from '@typegoose/typegoose';
 import {createSHA256} from '../../helpers/createSHA256.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -9,6 +9,8 @@ export interface UserEntity extends defaultClasses.Base {}
   schemaOptions: {
     collection: 'users',
     timestamps: true,
+  }, options: {
+    allowMixed: Severity.ALLOW
   }
 })
 
