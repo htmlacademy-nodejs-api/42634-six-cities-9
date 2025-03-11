@@ -14,3 +14,29 @@ tags:
     description: Действия с офферами
   - name: comments
     description: Действия с комментариями
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя по логину и паролю
+
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+  /users/{userId}/avatar:
+    post:
+      tags:
+        - users
+      summary: Загрузка аватара для пользователя
+      description: Загружает аватар пользователя по userId. Изображение должно быть в формате `png` или `jpg`
+
