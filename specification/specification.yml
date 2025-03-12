@@ -417,7 +417,7 @@ paths:
           description: Оффер с указанным ID не найден
         '500':
           description: Внутренняя ошибка сервера
-  '/offers/{offerId}/favorites':
+  /offers/favorites:
     get:
       tags:
         - offers
@@ -469,6 +469,7 @@ paths:
                       commentsCount: 15
         '401':
           description: Пользователь не авторизован
+  '/offers/{offerId}/favorites':
     post:
       tags:
         - offers
