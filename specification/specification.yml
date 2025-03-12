@@ -62,7 +62,7 @@ paths:
                 success:
                   summary: Пример успешного ответа
                   value:
-                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJzdQssw5c"
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJzdQssw5c
         '400':
           description: Некорректные данные запроса
         '401':
@@ -172,25 +172,27 @@ paths:
                       rentalPrice: 1200
                       commentsCount: 15
         '400':
-          description: >-
-            Некорректный запрос
+          description: Некорректный запрос
         '500':
           description: Внутренняя ошибка сервера
-  /offers/premium/{city}:
+  '/offers/premium/{city}':
     get:
       tags:
         - offers
       summary: Получение списка премиальных предложений для города
-      description: |
-        Возвращает список премиальных предложений (с флагом "Premium" = true) для указанного города.
-        Возвращается не более 3 предложений, отсортированных по дате публикации (по убыванию)
+      description: >
+        Возвращает список премиальных предложений (с флагом "Premium" = true)
+        для указанного города.
+
+        Возвращается не более 3 предложений, отсортированных по дате публикации
+        (по убыванию)
       parameters:
         - in: path
           name: city
           required: true
           schema:
             type: string
-          description: Название города, для которого нужно получить премиальные предложения
+          description: 'Название города, для которого нужно получить премиальные предложения'
       responses:
         '200':
           description: Успешный возврат списка премиальных предложений
@@ -201,7 +203,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/shortOffer'
         '400':
-          description: Некорректный запрос (например, невалидный город)
+          description: 'Некорректный запрос (например, невалидный город)'
         '404':
           description: Премиальные предложения для указанного города не найдены
   /offers/create:
@@ -335,7 +337,9 @@ paths:
             type: string
           description: ID оффера
       requestBody:
-        description: Обновленные данные оффера.  Все поля обязательны, даже если они не меняются
+        description: >-
+          Обновленные данные оффера.  Все поля обязательны, даже если они не
+          меняются
         required: true
         content:
           application/json:
@@ -414,6 +418,57 @@ paths:
         '500':
           description: Внутренняя ошибка сервера
   '/offers/{offerId}/favorites':
+    get:
+      tags:
+        - offers
+      summary: Получение списка избранных предложений
+      description: >-
+        Возвращает список предложений, добавленных в избранное текущим
+        пользователем
+      responses:
+        '200':
+          description: Успешный возврат списка избранных предложений.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shortOffer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    - title: Уютная квартира в центре города
+                      publicationDate: '2025-03-15T10:00:00.000Z'
+                      city:
+                        city: Москва
+                        coordinates:
+                          latitude: 55.7558
+                          longitude: 37.6173
+                      previewImage: 'https://example.com/apartment1.jpg'
+                      isPremium: true
+                      isFavorites: true
+                      rating: 4.5
+                      housingType: apartment
+                      rentalPrice: 1500
+                      commentsCount: 20
+                    - id: offer2
+                      title: Просторный дом за городом
+                      publicationDate: '2025-03-14T12:00:00.000Z'
+                      city:
+                        city: Лондон
+                        coordinates:
+                          latitude: 51.5074
+                          longitude: 0.1278
+                      previewImage: 'https://example.com/house1.jpg'
+                      isPremium: false
+                      isFavorites: true
+                      rating: 4.8
+                      housingType: house
+                      rentalPrice: 3000
+                      commentsCount: 15
+        '401':
+          description: Пользователь не авторизован
     post:
       tags:
         - offers
@@ -454,9 +509,7 @@ paths:
           description: 'ID оффера, который нужно удалить из избранного'
       responses:
         '204':
-          description: >-
-            Оффер успешно удален из избранного. Возвращает обновленный статус
-            избранного
+          description: Оффер успешно удален из избранного
         '401':
           description: Пользователь не авторизован
         '404':
@@ -776,7 +829,7 @@ components:
       properties:
         title:
           type: string
-          example: "Уютная квартира в центре Парижа"
+          example: Уютная квартира в центре Парижа
           description: Заголовок объявления
         publicationDate:
           type: string
