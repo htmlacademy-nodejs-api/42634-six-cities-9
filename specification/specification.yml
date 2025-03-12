@@ -133,12 +133,14 @@ paths:
         Пользователь получает список предложений по аренде (по умолчанию не
         более 60)
       parameters:
-        - in: path
-          name: offersCount
-          required: true
+        - in: query
+          name: limit
+          required: false
           schema:
-            type: string
-          description: Количество офферов
+            type: number
+            minimum: 1
+            maximum: 100
+          description: Максимальное количество предложений в ответе (необязательный).
       responses:
         '200':
           description: Успешный возврат списка предложений.
@@ -147,16 +149,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/offer'
+                  $ref: '#/components/schemas/shortOffer'
               examples:
                 success:
                   summary: Пример успешного ответа
                   value:
-                    - id: 6329c3d6a04ab1061c6425ea
-                      title: Уютная квартира в центре Парижа
-                      description: >-
-                        Современная квартира с панорамными окнами и стильным
-                        интерьером.
+                    - title: Уютная квартира в центре Парижа
                       publicationDate: '2025-03-12T13:08:00.000Z'
                       city:
                         city: Paris
@@ -164,29 +162,15 @@ paths:
                           latitude: 48.8566
                           longitude: 2.3522
                       previewImage: 'https://example.com/images/paris_apartment_preview.jpg'
-                      housingPhotos:
-                        - 'https://example.com/images/paris_apartment_1.jpg'
-                        - 'https://example.com/images/paris_apartment_2.jpg'
                       isPremium: true
                       isFavorites: false
                       rating: 4.8
                       housingType: apartment
-                      roomsCount: 2
-                      guestsCount: 4
                       rentalPrice: 1200
-                      conveniences:
-                        - Air conditioning
-                        - Laptop friendly workspace
-                        - Washer
-                      user:
-                        id: a1b2c3d4-e5f6-7890-1234-567890abcdef
-                        name: Иван
-                        email: ivan@example.com
                       commentsCount: 15
         '400':
           description: >-
-            Некорректный запрос.  Например, если значение параметра
-            `offersCount` не является числом или выходит за допустимые пределы
+            Некорректный запрос
         '500':
           description: Внутренняя ошибка сервера.
   /offers/create:
@@ -761,6 +745,69 @@ components:
               example: 2.3522
               description: Долгота местоположения оффера
           description: Географические координаты предложения
+    shortOffer:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Уютная квартира в центре Парижа"
+          description: Заголовок объявления
+        publicationDate:
+          type: string
+          format: date-time
+          example: '2025-03-12T13:08:00.000Z'
+          description: Дата публикации
+        city:
+          type: object
+          properties:
+            city:
+              type: string
+              example: Paris
+              description: Город
+            coordinates:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  format: float
+                  example: 48.8566
+                  description: Широта
+                longitude:
+                  type: number
+                  format: float
+                  example: 2.3522
+                  description: Долгота
+          description: Информация о городе и координатах
+        previewImage:
+          type: string
+          format: url
+          example: 'https://example.com/images/paris_apartment_preview.jpg'
+          description: URL превью изображения
+        isPremium:
+          type: boolean
+          example: true
+          description: Является ли предложение премиум
+        isFavorites:
+          type: boolean
+          example: false
+          description: Находится ли предложение в избранном
+        rating:
+          type: number
+          format: integer
+          example: 4.8
+          description: Рейтинг предложения
+        housingType:
+          type: string
+          example: apartment
+          description: Тип жилья
+        rentalPrice:
+          type: integer
+          example: 1200
+          description: Цена аренды
+        commentsCount:
+          type: integer
+          example: 15
+          description: Количество комментариев
     comment:
       type: object
       required:
