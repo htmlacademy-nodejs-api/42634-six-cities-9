@@ -31,13 +31,23 @@ paths:
         required: true
       responses:
         "201":
-          description: Пользователь зарегистрирован
+          description: Пользователь успешно зарегистрирован
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/user'
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestError'
         "409":
           description: Пользоватьель с таким email уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/existedUserError'
   /users/login:
     post:
       tags:
@@ -136,22 +146,30 @@ components:
         name:
           type: string
           example: Denis
+          description: Имя пользователя
 
         email:
           type: string
+          format: email
           example: test@yandex.ru
+          description: Email пользователя
 
         password:
           type: string
           example: 123456
+          minLength: 6
+          description: Пароль пользователя
 
         avatar:
           type: string
           example: avatar.jpg
+          description: URL аватара пользователя (необязательный)
 
         userType:
           type: string
           example: standard
+          enum: [standard, pro]
+          description: Тип пользователя (standard или pro)
 
     authUser:
       type: object
@@ -159,11 +177,14 @@ components:
       properties:
         email:
           type: string
+          format: email
           example: test@yandex.ru
+          description: Email пользователя
 
         password:
           type: string
           example: 12345
+          description: Пароль пользователя
 
     user:
       type: object
@@ -172,13 +193,40 @@ components:
         id:
           type: string
           example: 6329c3d6a04ab1061c6425ea
+          description: ID пользователя
 
         email:
           type: string
+          format: email
           example: test@yandex.ru
+          description: Email пользователя
 
         avatar:
           type: string
           example: avatar.jpg
+          description: URL аватара пользователя (необязательный)
+
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6
+          description: JWT access токен
+
+    badRequestError:
+      type: object
+
+      properties:
+        message:
+          type: string
+          example: "Некорректные данные запроса"
+          description: Сообщение об ошибке
+
+    existedUserError:
+      type: object
+
+      properties:
+        message:
+          type: string
+          example: "Пользоватьель с таким email уже существует"
+          description: Сообщение об ошибке
 
 
