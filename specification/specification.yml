@@ -320,6 +320,13 @@ paths:
           schema:
             type: string
           description: ID оффера
+      requestBody:
+        description: Обновленные данные оффера.  Все поля обязательны, даже если они не меняются
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offer'
       responses:
         '200':
           description: Оффер успешно обновлен. Возвращает обновленный объект оффера
@@ -331,7 +338,6 @@ paths:
                 success:
                   summary: Успешное обновление
                   value:
-                    id: a1b2c3d4-e5f6-7890-1234-567890abcdef
                     title: Улучшенная квартира в центре города
                     description: Описание обновленной квартиры
                     publicationDate: '2024-03-13T10:00:00.000Z'
