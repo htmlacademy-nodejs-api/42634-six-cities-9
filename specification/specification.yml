@@ -136,7 +136,12 @@ paths:
       summary: Получение списка всех предложений (по умолчанию не более 60)
       description: Пользователь получает список предложений по аренде (по умолчанию не более 60)
       parameters:
-        - offersCount
+        - in: path
+          name: offersCount
+          required: true
+          schema:
+            type: string
+          description: Количество офферов
       responses:
         "200":
           description: Успешный возврат списка предложений.
@@ -374,24 +379,53 @@ paths:
         "403":
           description: Доступ запрещен. Пользователь не является владельцем оффера
         "404":
-          description: Оффер с указанным ID не найден.
+          description: Оффер с указанным ID не найден
         "500":
-          description: Внутренняя ошибка сервера.
+          description: Внутренняя ошибка сервера
   /offers/{offerId}/favorites:
     post:
       tags:
         - offers
       summary: Добавление оффера в избранное
       description: Пользователь может добавить оффер в раздел "Избранное", передав offerId нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+          description: ID оффера, который нужно добавить в избранное
       responses:
-        "200": ddrr
+        "201":
+          description: Оффер успешно добавлен в избранное
+        "401":
+          description: Пользователь не авторизован
+        "404":
+          description: Оффер с указанным ID не найден
+        "500":
+          description: Внутренняя ошибка сервера
     delete:
       tags:
         - offers
       summary: Удаление оффера из избранного
       description: Пользователь может удалить оффер из раздела "Избранное", передав offerId нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID оффера, который нужно удалить из избранного
       responses:
-        "200": ddrr
+        "204":
+          description: Оффер успешно удален из избранного. Возвращает обновленный статус избранного
+        "401":
+          description: Пользователь не авторизован
+        "404":
+          description: Оффер с указанным ID не найден
+        "500":
+          description: Внутренняя ошибка сервера
 
   /comments/{offerId}:
     get:
@@ -635,3 +669,31 @@ components:
                 example: 2.3522
                 description: Долгота местоположения оффера
           description: Географические координаты предложения
+
+    comment:
+      type: object
+      required:
+        - text
+        - publicationDate
+        - rating
+        - author
+      properties:
+        text:
+          type: string
+          example: Отличная квартира, рекомендую!
+          description: Текст комментария
+        publicationDate:
+          type: string
+          format: date-time
+          example: "2025-03-13T12:00:00.000Z"
+          description: Дата публикации комментария
+        rating:
+          type: number
+          format: int32
+          minimum: 1
+          maximum: 5
+          example: 5
+          description: Рейтинг (от 1 до 5)
+        author:
+          $ref: '#/components/schemas/user'
+          description: Информация об авторе комментария

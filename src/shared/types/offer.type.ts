@@ -10,6 +10,13 @@ export type Coordinates = {
 
 export type CityWithCoordinates = { city: CityType, coordinates: Coordinates };
 
+export type Comment = {
+  text: string;
+  publicationDate: Date;
+  rating: number;
+  author: User;
+}
+
 export type Offer = {
   title: string;
   description: string;
