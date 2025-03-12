@@ -175,7 +175,35 @@ paths:
           description: >-
             Некорректный запрос
         '500':
-          description: Внутренняя ошибка сервера.
+          description: Внутренняя ошибка сервера
+  /offers/premium/{city}:
+    get:
+      tags:
+        - offers
+      summary: Получение списка премиальных предложений для города
+      description: |
+        Возвращает список премиальных предложений (с флагом "Premium" = true) для указанного города.
+        Возвращается не более 3 предложений, отсортированных по дате публикации (по убыванию)
+      parameters:
+        - in: path
+          name: city
+          required: true
+          schema:
+            type: string
+          description: Название города, для которого нужно получить премиальные предложения
+      responses:
+        '200':
+          description: Успешный возврат списка премиальных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shortOffer'
+        '400':
+          description: Некорректный запрос (например, невалидный город)
+        '404':
+          description: Премиальные предложения для указанного города не найдены
   /offers/create:
     post:
       tags:
