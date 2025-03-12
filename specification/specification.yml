@@ -133,41 +133,102 @@ paths:
     get:
       tags:
         - offers
-      summary: Получение списка всех предложений
+      summary: Получение списка всех предложений (по умолчанию не более 60)
       description: Пользователь получает список предложений по аренде (по умолчанию не более 60)
+      parameters:
+        - offersCount
+      responses:
+        "200":
+          description: Успешный возврат списка предложений.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/offer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    - id: "6329c3d6a04ab1061c6425ea"
+                      title: "Уютная квартира в центре Парижа"
+                      description: "Современная квартира с панорамными окнами и стильным интерьером."
+                      publicationDate: "2025-03-12T13:08:00.000Z"
+                      city:
+                        city: "Paris"
+                        coordinates:
+                          latitude: 48.8566
+                          longitude: 2.3522
+                      previewImage: "https://example.com/images/paris_apartment_preview.jpg"
+                      housingPhotos:
+                        - "https://example.com/images/paris_apartment_1.jpg"
+                        - "https://example.com/images/paris_apartment_2.jpg"
+                      isPremium: true
+                      isFavorites: false
+                      rating: 4.8
+                      housingType: "apartment"
+                      roomsCount: 2
+                      guestsCount: 4
+                      rentalPrice: 1200
+                      conveniences:
+                        - "Air conditioning"
+                        - "Laptop friendly workspace"
+                        - "Washer"
+                      user:
+                        id: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                        name: "Иван"
+                        email: "ivan@example.com"
+                      commentsCount: 15
+        "400":
+          description: Некорректный запрос.  Например, если значение параметра `offersCount` не является числом или выходит за допустимые пределы
+
+        "500":
+          description: Внутренняя ошибка сервера.
   /offers/create:
     post:
       tags:
         - offers
       summary: Создание оффера
       description: Пользователь создает оффер, передав необходимые данные для его создания
+      responses:
+        "200": ddrr
   /offers/{offerId}:
     get:
       tags:
         - offers
       summary: Получение детальной информации по офферу
       description: Пользователь получает всю необходимую информацию по офферу, передав offerId нужного оффера
+      responses:
+        "200": ddrr
     put:
       tags:
         - offers
       summary: Редактирование оффера
       description: Пользователь редактирует оффер, передав обновленные данные и offerId нужного оффера
+      responses:
+        "200": ddrr
     delete:
       tags:
         - offers
       summary: Удаление оффера
       description: Пользователь удаляет оффер, передав offerId нужного оффера
+      responses:
+        "200": ddrr
   /offers/{offerId}/favorites:
     post:
       tags:
         - offers
       summary: Добавление оффера в избранное
       description: Пользователь может добавить оффер в раздел "Избранное", передав offerId нужного оффера
+      responses:
+        "200": ddrr
     delete:
       tags:
         - offers
       summary: Удаление оффера из избранного
       description: Пользователь может удалить оффер из раздела "Избранное", передав offerId нужного оффера
+      responses:
+        "200": ddrr
 
   /comments/{offerId}:
     get:
@@ -265,7 +326,7 @@ components:
         - previewImage
         - housingPhotos
         - isPremium
-        - isFavorites
+        - isFavorite
         - rating
         - housingType
         - roomsCount
@@ -411,8 +472,3 @@ components:
                 example: 2.3522
                 description: Долгота местоположения оффера
           description: Географические координаты предложения
-
-
-
-
-
