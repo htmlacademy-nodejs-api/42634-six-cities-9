@@ -55,11 +55,14 @@ paths:
         required: true
       responses:
         '200':
-          description: Пользователь авторизован
+          description: Пользователь успешно авторизован. Возвращает токен доступа.
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/user'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJzdQssw5c"
         '400':
           description: Некорректные данные запроса
         '401':
