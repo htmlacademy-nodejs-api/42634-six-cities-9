@@ -190,30 +190,193 @@ paths:
         - offers
       summary: Создание оффера
       description: Пользователь создает оффер, передав необходимые данные для его создания
+      requestBody:
+        description: Данные, необходимые для создания нового оффера
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offer'
       responses:
-        "200": ddrr
+        "201":
+          description: Оффер успешно создан. Возвращается созданный оффер
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    id: "6329c3d6a04ab1061c6425ea"
+                    title: "Новое предложение в центре Парижа"
+                    description: "Описание нового предложения"
+                    publicationDate: "2025-03-15T10:00:00.000Z"
+                    city:
+                      city: "Paris"
+                      coordinates:
+                        latitude: 48.8566
+                        longitude: 2.3522
+                    previewImage: "https://example.com/new_offer_preview.jpg"
+                    housingPhotos: [ "https://example.com/new_offer_1.jpg" ]
+                    isPremium: false
+                    isFavorites: false
+                    rating: 0
+                    housingType: "apartment"
+                    roomsCount: 1
+                    guestsCount: 2
+                    rentalPrice: 800
+                    conveniences: [ "WiFi", "Kitchen" ]
+                    user:
+                      id: "user123"
+                      name: "Иван"
+                      email: "ivan@example.com"
+        "400":
+          description: Некорректный запрос
+        "500":
+          description: Внутренняя ошибка
   /offers/{offerId}:
     get:
       tags:
         - offers
       summary: Получение детальной информации по офферу
       description: Пользователь получает всю необходимую информацию по офферу, передав offerId нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+          description: ID оффера
       responses:
-        "200": ddrr
+        "200":
+          description: Успешный возврат детальной информации об оффере
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    id: "6329c3d6a04ab1061c6425ea"
+                    title: "Уютная квартира в центре Парижа"
+                    description: "Современная квартира с панорамными окнами и стильным интерьером."
+                    publicationDate: "2025-03-12T13:08:00.000Z"
+                    city:
+                      city: "Paris"
+                      coordinates:
+                        latitude: 48.8566
+                        longitude: 2.3522
+                    previewImage: "https://example.com/images/paris_apartment_preview.jpg"
+                    housingPhotos:
+                      - "https://example.com/images/paris_apartment_1.jpg"
+                      - "https://example.com/images/paris_apartment_2.jpg"
+                    isPremium: true
+                    isFavorites: false
+                    rating: 4.8
+                    housingType: "apartment"
+                    roomsCount: 2
+                    guestsCount: 4
+                    rentalPrice: 1200
+                    conveniences:
+                      - "Air conditioning"
+                      - "Laptop friendly workspace"
+                      - "Washer"
+                    user:
+                      id: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                      name: "Иван"
+                      email: "ivan@example.com"
+                    commentsCount: 15
+        "404":
+          description: Оффер с указанным ID не найден
+        "500":
+          description: Внутренняя ошибка сервера.
     put:
       tags:
         - offers
       summary: Редактирование оффера
       description: Пользователь редактирует оффер, передав обновленные данные и offerId нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+          description: ID оффера
       responses:
-        "200": ddrr
+        "200":
+          description: Оффер успешно обновлен. Возвращает обновленный объект оффера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+              examples:
+                success:
+                  summary: Успешное обновление
+                  value:
+                    id: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                    title: "Улучшенная квартира в центре города"
+                    description: "Описание обновленной квартиры"
+                    publicationDate: "2024-03-13T10:00:00.000Z"
+                    city:
+                      city: "Париж"
+                      coordinates:
+                        latitude: 48.8566
+                        longitude: 2.3522
+                    previewImage: "https://example.com/updated_preview.jpg"
+                    housingPhotos:
+                      - "https://example.com/updated_photo1.jpg"
+                    isPremium: true
+                    isFavorites: false
+                    rating: 4.9
+                    housingType: "apartment"
+                    roomsCount: 3
+                    guestsCount: 5
+                    rentalPrice: 1600
+                    conveniences:
+                      - "Air conditioning"
+                      - "WiFi"
+                      - "Parking"
+                    user:
+                      id: "userid123"
+                      name: "Иван"
+                      email: "ivan@example.com"
+                    commentsCount: 25
+        "400":
+          description: Некорректный запрос. Ошибки валидации входных данных
+        "401":
+          description: Пользователь не авторизован. Требуется действительный JWT
+        "403":
+          description: Доступ запрещен. Пользователь не является владельцем
+        "404":
+          description: Оффер с указанным ID не найден
+        "500":
+          description: Внутренняя ошибка сервера
     delete:
       tags:
         - offers
       summary: Удаление оффера
       description: Пользователь удаляет оффер, передав offerId нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID оффера, который нужно удалить
       responses:
-        "200": ddrr
+        "204":
+          description: Оффер успешно удален
+        "401":
+          description: Пользователь не авторизован. Требуется действительный JWT
+        "403":
+          description: Доступ запрещен. Пользователь не является владельцем оффера
+        "404":
+          description: Оффер с указанным ID не найден.
+        "500":
+          description: Внутренняя ошибка сервера.
   /offers/{offerId}/favorites:
     post:
       tags:
