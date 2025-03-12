@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.1
 info:
   title: API сервер для проекта «Шесть городов»
   description: |-
@@ -38,16 +38,10 @@ paths:
                 $ref: '#/components/schemas/user'
         "400":
           description: Некорректные данные запроса
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/badRequestError'
         "409":
           description: Пользоватьель с таким email уже существует
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/existedUserError'
+        "422":
+          description: Ошибка валидации данных
   /users/login:
     post:
       tags:
@@ -63,29 +57,78 @@ paths:
               $ref: '#/components/schemas/authUser'
         required: true
       responses:
-        "201":
+        "200":
           description: Пользователь авторизован
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/user'
+        "400":
+          description: Некорректные данные запроса
+        "401":
+          description: Неверные учетные данные (неверный email или пароль)
+        "422":
+          description: Ошибка валидации данных
     get:
       tags:
         - users
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
+
+      responses:
+        "200":
+          description: Пользователь авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        "401":
+          description: Пользователь не авторизован
   /users/logout:
     post:
       tags:
         - users
       summary: Выход из закрытой части приложения
       description: Сервис предоставляет ресурс для завершения пользовательского сеанса (доступен только авторизованным клиентам)
+
+      responses:
+        "204":
+          description: Пользователь успешно вышел из системы
+        "401":
+          description: Пользователь не авторизован (отсутствует или недействительный токен)
+
   /users/{userId}/avatar:
     post:
       tags:
         - users
       summary: Загрузка аватара для пользователя
       description: Загружает аватар пользователя по userId. Изображение должно быть в формате `png` или `jpg`
+
+      requestBody:
+        description: Файл изображения аватара (png или jpg)
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: Файл изображения аватара (png или jpg)
+        required: true
+
+      responses:
+        "200":
+          description: Аватар успешно загружен
+        "400":
+          description: Некорректный запрос
+        "401":
+          description: Пользователь не авторизован (отсутствует или недействительный токен)
+        "404":
+          description: Пользователь с указанным userId не найден
+        "413":
+          description: Слишком большой файл
+
   /offers/list:
     get:
       tags:
@@ -125,6 +168,7 @@ paths:
         - offers
       summary: Удаление оффера из избранного
       description: Пользователь может удалить оффер из раздела "Избранное", передав offerId нужного оффера
+
   /comments/{offerId}:
     get:
       tags:
@@ -211,22 +255,5 @@ components:
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6
           description: JWT access токен
 
-    badRequestError:
-      type: object
-
-      properties:
-        message:
-          type: string
-          example: "Некорректные данные запроса"
-          description: Сообщение об ошибке
-
-    existedUserError:
-      type: object
-
-      properties:
-        message:
-          type: string
-          example: "Пользоватьель с таким email уже существует"
-          description: Сообщение об ошибке
 
 
