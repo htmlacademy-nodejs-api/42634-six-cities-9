@@ -45,17 +45,87 @@ paths:
       summary: Авторизация пользователя
       description: Авторизует пользователя по логину и паролю
 
+      requestBody:
+        description: Данные для авторизации пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authUser'
+        required: true
+      responses:
+        "201":
+          description: Пользователь авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
     get:
       tags:
         - users
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Выход из закрытой части приложения
+      description: Сервис предоставляет ресурс для завершения пользовательского сеанса (доступен только авторизованным клиентам)
   /users/{userId}/avatar:
     post:
       tags:
         - users
       summary: Загрузка аватара для пользователя
       description: Загружает аватар пользователя по userId. Изображение должно быть в формате `png` или `jpg`
+  /offers/list:
+    get:
+      tags:
+        - offers
+      summary: Получение списка всех предложений
+      description: Пользователь получает список предложений по аренде (по умолчанию не более 60)
+  /offers/create:
+    post:
+      tags:
+        - offers
+      summary: Создание оффера
+      description: Пользователь создает оффер, передав необходимые данные для его создания
+  /offers/{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Получение детальной информации по офферу
+      description: Пользователь получает всю необходимую информацию по офферу, передав offerId нужного оффера
+    put:
+      tags:
+        - offers
+      summary: Редактирование оффера
+      description: Пользователь редактирует оффер, передав обновленные данные и offerId нужного оффера
+    delete:
+      tags:
+        - offers
+      summary: Удаление оффера
+      description: Пользователь удаляет оффер, передав offerId нужного оффера
+  /offers/{offerId}/favorites:
+    post:
+      tags:
+        - offers
+      summary: Добавление оффера в избранное
+      description: Пользователь может добавить оффер в раздел "Избранное", передав offerId нужного оффера
+    delete:
+      tags:
+        - offers
+      summary: Удаление оффера из избранного
+      description: Пользователь может удалить оффер из раздела "Избранное", передав offerId нужного оффера
+  /comments/{offerId}:
+    get:
+      tags:
+        - comments
+      summary: Получение списка комментариев для оффера
+      description: Пользователь может получить список всех комментариев для оффера, передав offerId нужного оффера
+    post:
+      tags:
+        - comments
+      summary: Создание комментария для оффера
+      description: Пользователь может создать комментарий для оффера, передав offerId нужного оффера и данные комментария
 
 components:
   schemas:
@@ -82,6 +152,19 @@ components:
         userType:
           type: string
           example: standard
+
+    authUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: test@yandex.ru
+
+        password:
+          type: string
+          example: 12345
+
     user:
       type: object
 
