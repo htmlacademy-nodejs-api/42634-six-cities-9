@@ -173,8 +173,6 @@ paths:
                       commentsCount: 15
         '400':
           description: Некорректный запрос
-        '500':
-          description: Внутренняя ошибка сервера
   '/offers/premium/{city}':
     get:
       tags:
@@ -260,8 +258,6 @@ paths:
           description: Некорректный запрос
         '401':
           description: Пользователь не авторизован. Требуется действительный JWT
-        '500':
-          description: Внутренняя ошибка
   '/offers/{offerId}':
     get:
       tags:
@@ -320,8 +316,6 @@ paths:
                     commentsCount: 15
         '404':
           description: Оффер с указанным ID не найден
-        '500':
-          description: Внутренняя ошибка сервера.
     put:
       tags:
         - offers
@@ -391,8 +385,6 @@ paths:
           description: Доступ запрещен. Пользователь не является владельцем
         '404':
           description: Оффер с указанным ID не найден
-        '500':
-          description: Внутренняя ошибка сервера
     delete:
       tags:
         - offers
@@ -415,8 +407,6 @@ paths:
           description: Доступ запрещен. Пользователь не является владельцем оффера
         '404':
           description: Оффер с указанным ID не найден
-        '500':
-          description: Внутренняя ошибка сервера
   /offers/favorites:
     get:
       tags:
@@ -491,8 +481,6 @@ paths:
           description: Пользователь не авторизован
         '404':
           description: Оффер с указанным ID не найден
-        '500':
-          description: Внутренняя ошибка сервера
     delete:
       tags:
         - offers
@@ -515,8 +503,6 @@ paths:
           description: Пользователь не авторизован
         '404':
           description: Оффер с указанным ID не найден
-        '500':
-          description: Внутренняя ошибка сервера
   '/comments/{offerId}':
     get:
       tags:
@@ -564,8 +550,6 @@ paths:
           description: 'Некорректный запрос. Например, невалидный offerId'
         '404':
           description: Оффер с указанным ID не найден
-        '500':
-          description: Внутренняя ошибка сервера.
     post:
       tags:
         - comments
@@ -614,8 +598,6 @@ paths:
           description: Пользователь не авторизован
         '404':
           description: Оффер с указанным ID не найден
-        '500':
-          description: Внутренняя ошибка сервера
 components:
   schemas:
     createUser:
