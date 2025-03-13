@@ -1,0 +1,900 @@
+openapi: 3.0.1
+info:
+  title: API сервер для проекта «Шесть городов»
+  description: '* Список ресурсов и маршрутов сервера «Шесть городов».'
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  version: 1.0.0
+tags:
+  - name: users
+    description: Действия с пользователями
+  - name: offers
+    description: Действия с офферами
+  - name: comments
+    description: Действия с комментариями
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя
+      requestBody:
+        description: Данные для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+        required: true
+      responses:
+        '201':
+          description: Пользователь успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '400':
+          description: Некорректные данные запроса
+        '409':
+          description: Пользоватьель с таким email уже существует
+        '422':
+          description: Ошибка валидации данных
+  /users/check:
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+      responses:
+        '200':
+          description: Пользователь авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          description: Пользователь не авторизован
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя по логину и паролю
+      requestBody:
+        description: Данные для авторизации пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authUser'
+        required: true
+      responses:
+        '200':
+          description: Пользователь успешно авторизован. Возвращает токен доступа.
+          content:
+            application/json:
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJzdQssw5c
+        '400':
+          description: Некорректные данные запроса
+        '401':
+          description: Неверные учетные данные (неверный email или пароль)
+        '422':
+          description: Ошибка валидации данных
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Выход из закрытой части приложения
+      description: >-
+        Сервис предоставляет ресурс для завершения пользовательского сеанса
+        (доступен только авторизованным клиентам)
+      responses:
+        '204':
+          description: Пользователь успешно вышел из системы
+        '401':
+          description: Пользователь не авторизован (отсутствует или недействительный токен)
+  '/users/{userId}/avatar':
+    post:
+      tags:
+        - users
+      summary: Загрузка аватара для пользователя
+      description: >-
+        Загружает аватар пользователя по userId. Изображение должно быть в
+        формате `png` или `jpg`
+      requestBody:
+        description: Файл изображения аватара (png или jpg)
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: Файл изображения аватара (png или jpg)
+        required: true
+      responses:
+        '200':
+          description: Аватар успешно загружен
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Пользователь не авторизован (отсутствует или недействительный токен)
+        '404':
+          description: Пользователь с указанным userId не найден
+        '413':
+          description: Слишком большой файл
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Получение списка всех предложений (по умолчанию не более 60)
+      description: >-
+        Пользователь получает список предложений по аренде (по умолчанию не
+        более 60)
+      parameters:
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: number
+            minimum: 1
+            maximum: 100
+          description: Максимальное количество предложений в ответе (необязательный).
+      responses:
+        '200':
+          description: Успешный возврат списка предложений.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shortOffer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    - title: Уютная квартира в центре Парижа
+                      publicationDate: '2025-03-12T13:08:00.000Z'
+                      city:
+                        city: Paris
+                        coordinates:
+                          latitude: 48.8566
+                          longitude: 2.3522
+                      previewImage: 'https://example.com/images/paris_apartment_preview.jpg'
+                      isPremium: true
+                      isFavorites: false
+                      rating: 4.8
+                      housingType: apartment
+                      rentalPrice: 1200
+                      commentsCount: 15
+        '400':
+          description: Некорректный запрос
+  '/offers/premium/{city}':
+    get:
+      tags:
+        - offers
+      summary: Получение списка премиальных предложений для города
+      description: >
+        Возвращает список премиальных предложений (с флагом "Premium" = true)
+        для указанного города.
+
+        Возвращается не более 3 предложений, отсортированных по дате публикации
+        (по убыванию)
+      parameters:
+        - in: path
+          name: city
+          required: true
+          schema:
+            type: string
+          description: 'Название города, для которого нужно получить премиальные предложения'
+      responses:
+        '200':
+          description: Успешный возврат списка премиальных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shortOffer'
+        '400':
+          description: 'Некорректный запрос (например, невалидный город)'
+        '404':
+          description: Премиальные предложения для указанного города не найдены
+  /offers/create:
+    post:
+      tags:
+        - offers
+      summary: Создание оффера
+      description: 'Пользователь создает оффер, передав необходимые данные для его создания'
+      requestBody:
+        description: 'Данные, необходимые для создания нового оффера'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offer'
+      responses:
+        '201':
+          description: Оффер успешно создан. Возвращается созданный оффер
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    id: 6329c3d6a04ab1061c6425ea
+                    title: Новое предложение в центре Парижа
+                    description: Описание нового предложения
+                    publicationDate: '2025-03-15T10:00:00.000Z'
+                    city:
+                      city: Paris
+                      coordinates:
+                        latitude: 48.8566
+                        longitude: 2.3522
+                    previewImage: 'https://example.com/new_offer_preview.jpg'
+                    housingPhotos:
+                      - 'https://example.com/new_offer_1.jpg'
+                    isPremium: false
+                    isFavorites: false
+                    rating: 0
+                    housingType: apartment
+                    roomsCount: 1
+                    guestsCount: 2
+                    rentalPrice: 800
+                    conveniences:
+                      - WiFi
+                      - Kitchen
+                    user:
+                      id: user123
+                      name: Иван
+                      email: ivan@example.com
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Пользователь не авторизован. Требуется действительный JWT
+  '/offers/{offerId}':
+    get:
+      tags:
+        - offers
+      summary: Получение детальной информации по офферу
+      description: >-
+        Пользователь получает всю необходимую информацию по офферу, передав
+        offerId нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+          description: ID оффера
+      responses:
+        '200':
+          description: Успешный возврат детальной информации об оффере
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    title: Уютная квартира в центре Парижа
+                    description: >-
+                      Современная квартира с панорамными окнами и стильным
+                      интерьером.
+                    publicationDate: '2025-03-12T13:08:00.000Z'
+                    city:
+                      city: Paris
+                      coordinates:
+                        latitude: 48.8566
+                        longitude: 2.3522
+                    previewImage: 'https://example.com/images/paris_apartment_preview.jpg'
+                    housingPhotos:
+                      - 'https://example.com/images/paris_apartment_1.jpg'
+                      - 'https://example.com/images/paris_apartment_2.jpg'
+                    isPremium: true
+                    isFavorites: false
+                    rating: 4.8
+                    housingType: apartment
+                    roomsCount: 2
+                    guestsCount: 4
+                    rentalPrice: 1200
+                    conveniences:
+                      - Air conditioning
+                      - Laptop friendly workspace
+                      - Washer
+                    user:
+                      id: a1b2c3d4-e5f6-7890-1234-567890abcdef
+                      name: Иван
+                      email: ivan@example.com
+                    commentsCount: 15
+        '404':
+          description: Оффер с указанным ID не найден
+    put:
+      tags:
+        - offers
+      summary: Редактирование оффера
+      description: >-
+        Пользователь редактирует оффер, передав обновленные данные и offerId
+        нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+          description: ID оффера
+      requestBody:
+        description: >-
+          Обновленные данные оффера.  Все поля обязательны, даже если они не
+          меняются
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offer'
+      responses:
+        '200':
+          description: Оффер успешно обновлен. Возвращает обновленный объект оффера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+              examples:
+                success:
+                  summary: Успешное обновление
+                  value:
+                    title: Улучшенная квартира в центре города
+                    description: Описание обновленной квартиры
+                    publicationDate: '2024-03-13T10:00:00.000Z'
+                    city:
+                      city: Париж
+                      coordinates:
+                        latitude: 48.8566
+                        longitude: 2.3522
+                    previewImage: 'https://example.com/updated_preview.jpg'
+                    housingPhotos:
+                      - 'https://example.com/updated_photo1.jpg'
+                    isPremium: true
+                    isFavorites: false
+                    rating: 4.9
+                    housingType: apartment
+                    roomsCount: 3
+                    guestsCount: 5
+                    rentalPrice: 1600
+                    conveniences:
+                      - Air conditioning
+                      - WiFi
+                      - Parking
+                    user:
+                      id: userid123
+                      name: Иван
+                      email: ivan@example.com
+                    commentsCount: 25
+        '400':
+          description: Некорректный запрос. Ошибки валидации входных данных
+        '401':
+          description: Пользователь не авторизован. Требуется действительный JWT
+        '403':
+          description: Доступ запрещен. Пользователь не является владельцем
+        '404':
+          description: Оффер с указанным ID не найден
+    delete:
+      tags:
+        - offers
+      summary: Удаление оффера
+      description: 'Пользователь удаляет оффер, передав offerId нужного оффера'
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: 'ID оффера, который нужно удалить'
+      responses:
+        '204':
+          description: Оффер успешно удален
+        '401':
+          description: Пользователь не авторизован. Требуется действительный JWT
+        '403':
+          description: Доступ запрещен. Пользователь не является владельцем оффера
+        '404':
+          description: Оффер с указанным ID не найден
+  /offers/favorites:
+    get:
+      tags:
+        - offers
+      summary: Получение списка избранных предложений
+      description: >-
+        Возвращает список предложений, добавленных в избранное текущим
+        пользователем
+      responses:
+        '200':
+          description: Успешный возврат списка избранных предложений.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shortOffer'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    - title: Уютная квартира в центре города
+                      publicationDate: '2025-03-15T10:00:00.000Z'
+                      city:
+                        city: Москва
+                        coordinates:
+                          latitude: 55.7558
+                          longitude: 37.6173
+                      previewImage: 'https://example.com/apartment1.jpg'
+                      isPremium: true
+                      isFavorites: true
+                      rating: 4.5
+                      housingType: apartment
+                      rentalPrice: 1500
+                      commentsCount: 20
+                    - id: offer2
+                      title: Просторный дом за городом
+                      publicationDate: '2025-03-14T12:00:00.000Z'
+                      city:
+                        city: Лондон
+                        coordinates:
+                          latitude: 51.5074
+                          longitude: 0.1278
+                      previewImage: 'https://example.com/house1.jpg'
+                      isPremium: false
+                      isFavorites: true
+                      rating: 4.8
+                      housingType: house
+                      rentalPrice: 3000
+                      commentsCount: 15
+        '401':
+          description: Пользователь не авторизован
+  '/offers/{offerId}/favorites':
+    post:
+      tags:
+        - offers
+      summary: Добавление оффера в избранное
+      description: >-
+        Пользователь может добавить оффер в раздел "Избранное", передав offerId
+        нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+          description: 'ID оффера, который нужно добавить в избранное'
+      responses:
+        '201':
+          description: Оффер успешно добавлен в избранное
+        '401':
+          description: Пользователь не авторизован
+        '404':
+          description: Оффер с указанным ID не найден
+    delete:
+      tags:
+        - offers
+      summary: Удаление оффера из избранного
+      description: >-
+        Пользователь может удалить оффер из раздела "Избранное", передав offerId
+        нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: 'ID оффера, который нужно удалить из избранного'
+      responses:
+        '204':
+          description: Оффер успешно удален из избранного
+        '401':
+          description: Пользователь не авторизован
+        '404':
+          description: Оффер с указанным ID не найден
+  '/offers/{offerId}/comments':
+    get:
+      tags:
+        - comments
+      summary: Получение списка комментариев для оффера
+      description: >-
+        Пользователь может получить список всех комментариев для оффера, передав
+        offerId нужного оффера
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: 'ID оффера, для которого нужно получить комментарии'
+      responses:
+        '200':
+          description: Успешный возврат списка комментариев для оффера.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    - text: 'Отличная квартира, рекомендую!'
+                      publicationDate: '2025-03-13T12:00:00.000Z'
+                      rating: 5
+                      author:
+                        id: a1b2c3d4-e5f6-7890-1234-567890abcdef
+                        name: Иван
+                        email: ivan@example.com
+                    - text: 'Неплохо, но могло быть и лучше.'
+                      publicationDate: '2025-03-12T18:30:00.000Z'
+                      rating: 3
+                      author:
+                        id: b2c3d4e5-f678-9012-3456-7890abcdefa1
+                        name: Мария
+                        email: maria@example.com
+        '400':
+          description: 'Некорректный запрос. Например, невалидный offerId'
+        '404':
+          description: Оффер с указанным ID не найден
+    post:
+      tags:
+        - comments
+      summary: Добавление комментария для оффера
+      description: >-
+        Пользователь может создать комментарий для оффера, передав offerId
+        нужного оффера и данные комментария
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: 'ID оффера, для которого нужно создать комментарий.'
+      requestBody:
+        description: Данные для создания нового комментария
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+      responses:
+        '201':
+          description: Комментарий успешно создан.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+              examples:
+                success:
+                  summary: Пример успешного ответа
+                  value:
+                    text: Новый комментарий!
+                    publicationDate: '2025-03-14T10:00:00.000Z'
+                    rating: 4
+                    author:
+                      id: a1b2c3d4-e5f6-7890-1234-567890abcdef
+                      name: Иван
+                      email: ivan@example.com
+        '400':
+          description: >-
+            Некорректный запрос.  Например, невалидный offerId или невалидные
+            данные комментария
+        '401':
+          description: Пользователь не авторизован
+        '404':
+          description: Оффер с указанным ID не найден
+components:
+  schemas:
+    createUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Denis
+          description: Имя пользователя
+        email:
+          type: string
+          format: email
+          example: test@yandex.ru
+          description: Email пользователя
+        password:
+          type: string
+          example: 123456
+          minLength: 6
+          description: Пароль пользователя
+        avatar:
+          type: string
+          example: avatar.jpg
+          description: URL аватара пользователя (необязательный)
+        userType:
+          type: string
+          example: standard
+          enum:
+            - standard
+            - pro
+          description: Тип пользователя (standard или pro)
+    authUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@yandex.ru
+          description: Email пользователя
+        password:
+          type: string
+          example: 12345
+          description: Пароль пользователя
+    user:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@yandex.ru
+          description: Email пользователя
+        avatar:
+          type: string
+          example: avatar.jpg
+          description: URL аватара пользователя (необязательный)
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6
+          description: JWT access токен
+    offer:
+      type: object
+      required:
+        - title
+        - description
+        - publicationDate
+        - city
+        - previewImage
+        - housingPhotos
+        - isPremium
+        - isFavorite
+        - rating
+        - housingType
+        - roomsCount
+        - guestsCount
+        - rentalPrice
+        - conveniences
+        - user
+        - coordinates
+      properties:
+        title:
+          type: string
+          example: Уютная квартира в центре Парижа
+          description: Заголовок оффера
+        description:
+          type: string
+          example: Современная квартира с панорамными окнами и стильным интерьером.
+          description: Описание оффера
+        publicationDate:
+          type: string
+          format: date-time
+          example: '2025-03-12T13:08:00.000Z'
+          description: Дата публикации оффера
+        city:
+          type: object
+          required:
+            - city
+            - coordinates
+          properties:
+            city:
+              type: string
+              enum:
+                - Paris
+                - Cologne
+                - Brussels
+                - Amsterdam
+                - Hamburg
+                - Dusseldorf
+              example: Paris
+              description: Название города
+            coordinates:
+              type: object
+              required:
+                - latitude
+                - longitude
+              properties:
+                latitude:
+                  type: number
+                  format: float
+                  example: 48.8566
+                  description: Широта города
+                longitude:
+                  type: number
+                  format: float
+                  example: 2.3522
+                  description: Долгота города
+          description: Информация о городе и координатах
+        previewImage:
+          type: string
+          format: url
+          example: 'https://example.com/images/paris_apartment_preview.jpg'
+          description: URL превью оффера
+        housingPhotos:
+          type: array
+          items:
+            type: string
+            format: url
+            example:
+              - 'https://example.com/images/paris_apartment_1.jpg'
+              - 'https://example.com/images/paris_apartment_2.jpg'
+            description: Спискок URL-фотографий оффера
+        isPremium:
+          type: boolean
+          example: true
+          description: 'Флаг того, является ли оффер премиальным'
+        isFavorite:
+          type: boolean
+          example: false
+          description: 'Флаг того, находится ли оффер в разделе "Избранное"'
+        rating:
+          type: number
+          format: float
+          example: 4.8
+          description: Рейтинг оффера (от 1 до 5)
+        housingType:
+          type: string
+          example: apartment
+          enum:
+            - apartment
+            - house
+            - room
+            - hotel
+        roomsCount:
+          type: number
+          format: int32
+          example: 2
+          description: Количество комнат
+        guestsCount:
+          type: number
+          format: int32
+          example: 4
+          description: Количество гостей
+        rentalPrice:
+          type: number
+          format: int32
+          example: 1000
+          description: Цена аренды
+        conveniences:
+          type: array
+          items:
+            type: string
+          example:
+            - Breakfast
+            - Fridge
+            - Washer
+          description: Список удобств
+        user:
+          $ref: '#/components/schemas/user'
+          description: Информация о пользователе
+        commentsCount:
+          type: number
+          format: int32
+          example: 12
+          description: Количество комментариев к офферу (необязательное поле)
+        coordinates:
+          type: object
+          required:
+            - latitude
+            - longitude
+          properties:
+            latitude:
+              type: number
+              format: float
+              example: 48.8566
+              description: Широта местоположения оффера
+            longitude:
+              type: number
+              format: float
+              example: 2.3522
+              description: Долгота местоположения оффера
+          description: Географические координаты предложения
+    shortOffer:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Уютная квартира в центре Парижа
+          description: Заголовок объявления
+        publicationDate:
+          type: string
+          format: date-time
+          example: '2025-03-12T13:08:00.000Z'
+          description: Дата публикации
+        city:
+          type: object
+          properties:
+            city:
+              type: string
+              example: Paris
+              description: Город
+            coordinates:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  format: float
+                  example: 48.8566
+                  description: Широта
+                longitude:
+                  type: number
+                  format: float
+                  example: 2.3522
+                  description: Долгота
+          description: Информация о городе и координатах
+        previewImage:
+          type: string
+          format: url
+          example: 'https://example.com/images/paris_apartment_preview.jpg'
+          description: URL превью изображения
+        isPremium:
+          type: boolean
+          example: true
+          description: Является ли предложение премиум
+        isFavorites:
+          type: boolean
+          example: false
+          description: Находится ли предложение в избранном
+        rating:
+          type: number
+          format: integer
+          example: 4.8
+          description: Рейтинг предложения
+        housingType:
+          type: string
+          example: apartment
+          description: Тип жилья
+        rentalPrice:
+          type: integer
+          example: 1200
+          description: Цена аренды
+        commentsCount:
+          type: integer
+          example: 15
+          description: Количество комментариев
+    comment:
+      type: object
+      required:
+        - text
+        - publicationDate
+        - rating
+        - author
+      properties:
+        text:
+          type: string
+          example: 'Отличная квартира, рекомендую!'
+          description: Текст комментария
+        publicationDate:
+          type: string
+          format: date-time
+          example: '2025-03-13T12:00:00.000Z'
+          description: Дата публикации комментария
+        rating:
+          type: number
+          format: int32
+          minimum: 1
+          maximum: 5
+          example: 5
+          description: Рейтинг (от 1 до 5)
+        author:
+          $ref: '#/components/schemas/user'
+          description: Информация об авторе комментария
