@@ -128,7 +128,7 @@ paths:
           description: Пользователь с указанным userId не найден
         '413':
           description: Слишком большой файл
-  /offers/list:
+  /offers:
     get:
       tags:
         - offers
