@@ -40,6 +40,21 @@ paths:
           description: Пользоватьель с таким email уже существует
         '422':
           description: Ошибка валидации данных
+  /users/check:
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+      responses:
+        '200':
+          description: Пользователь авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          description: Пользователь не авторизован
   /users/login:
     post:
       tags:
@@ -69,20 +84,6 @@ paths:
           description: Неверные учетные данные (неверный email или пароль)
         '422':
           description: Ошибка валидации данных
-    get:
-      tags:
-        - users
-      summary: Проверка состояния пользователя
-      description: Возвращает информацию по авторизованному пользователю
-      responses:
-        '200':
-          description: Пользователь авторизован
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user'
-        '401':
-          description: Пользователь не авторизован
   /users/logout:
     post:
       tags:
