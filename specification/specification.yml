@@ -503,7 +503,7 @@ paths:
           description: Пользователь не авторизован
         '404':
           description: Оффер с указанным ID не найден
-  '/comments/{offerId}':
+  '/offers/{offerId}/comments':
     get:
       tags:
         - comments
